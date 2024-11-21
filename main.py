@@ -49,25 +49,24 @@ def count_clicks(token, link):
     return click['response']['stats'][0]['views']
 
 
-def is_shorten_link(url, token):
+def is_shorten_link(url):
     check = urlsplit(url)
-    if 'vk.cc' in check.netloc:
-        return count_clicks(token, url), 'click'
-    else:
-        return shorten_link(token, url), 'short'
+    return 'vk.cc' in check.netloc
+
 
 
 def main():
     load_dotenv()
-    token = os.getenv('TOKEN')
+    token = os.environ['VKCC_TOKEN']
     user_input = input('Вставьте ссылку: ')
 
     try:
-        count_or_short, mark = is_shorten_link(user_input, token)
-        if 'click' in mark:
-            print(f'Кол-во переходов по ссылке: {count_or_short}')
+        if is_shorten_link(user_input):
+            count_clicks_result = count_clicks(token, user_input)
+            print(f'Кол-во переходов по ссылке: {count_clicks_result}')
         else:
-            print(f'Сокращенная ссылка: {count_or_short}')
+            shorten_link_result = shorten_link(token, user_input)
+            print(f'Сокращенная ссылка: {shorten_link_result}')
 
     except requests.exceptions.HTTPError as error:
         print(f"HTTP ошибка: {error}")
