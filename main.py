@@ -1,5 +1,6 @@
 import requests
 import os
+import argparse
 from urllib.parse import urlsplit
 from dotenv import load_dotenv
 
@@ -14,15 +15,15 @@ def shorten_link(token, url):
 
     response = requests.get(short_url, params=params)
     response.raise_for_status()
-    export_url = response.json()
+    short_link_response = response.json()
 
-    if 'error' in export_url:
+    if 'error' in short_link_response:
         raise ValueError(
-            f"{export_url['error'].get('error_msg')}\n"
-            f"код ошибки: {export_url['error'].get('error_code')}"
+            f"{short_link_response['error'].get('error_msg')}\n"
+            f"код ошибки: {short_link_response['error'].get('error_code')}"
         )
 
-    return export_url['response'].get('short_url')
+    return short_link_response['response'].get('short_url')
 
 
 def count_clicks(token, link):
@@ -50,15 +51,20 @@ def count_clicks(token, link):
 
 
 def is_shorten_link(url):
-    check = urlsplit(url)
-    return 'vk.cc' in check.netloc
-
+    url_analysis = urlsplit(url)
+    return 'vk.cc' in url_analysis.netloc
 
 
 def main():
     load_dotenv()
     token = os.environ['VKCC_TOKEN']
-    user_input = input('Вставьте ссылку: ')
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('url', type=str, help='Нужно указать обычную или короткую ссылку')
+
+    args = parser.parse_args()
+
+    user_input = args.url
 
     try:
         if is_shorten_link(user_input):
