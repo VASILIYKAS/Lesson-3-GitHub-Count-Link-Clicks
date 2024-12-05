@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# PyCharm
+.idea/
+
 # C extensions
 *.so
 
@@ -153,6 +156,3 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-
-# PyCharm
-.idea/
